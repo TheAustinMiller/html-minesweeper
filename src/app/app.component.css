@@ -1,5 +1,19 @@
 header {
     text-align: center;
-    font-size: 3em;
-    margin: 0.5em 0;
+    font-size: 2rem;
+}
+
+.border {
+    align-content: center;
+    background: rgb(172, 172, 172);
+    padding: 4px;
+    margin: 25px 0;
+    border: black 3px solid;
+    display: inline-block;
+}
+
+.light-border {
+    background: lightgray;
+    padding: 6px;
+    border: rgb(53, 53, 53) 2px solid;
 }
