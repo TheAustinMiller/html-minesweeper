@@ -1,0 +1,16 @@
+<div class="border">
+  <div class="game-board">
+
+    <div class="row" *ngFor="let row of gameBoard; let rowIndex = index">
+      <div class="cell"
+           *ngFor="let cell of row; let colIndex = index"
+           [attr.data-row]="rowIndex"
+           [attr.data-col]="colIndex">
+
+        <button></button>
+
+      </div>
+    </div>
+
+  </div>
+</div>
