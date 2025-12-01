@@ -1,16 +1,15 @@
 <div class="border">
-  <div class="game-board">
-
-    <div class="row" *ngFor="let row of gameBoard; let rowIndex = index">
-      <div class="cell"
-           *ngFor="let cell of row; let colIndex = index"
-           [attr.data-row]="rowIndex"
-           [attr.data-col]="colIndex">
-
-        <button></button>
-
+  <div class="light-border">
+    <div class="game-board">
+      <div class="row" *ngFor="let row of gameBoard; let rowIndex = index">
+        <div class="cell" *ngFor="let cell of row; let colIndex = index" [attr.data-row]="rowIndex"
+          [attr.data-col]="colIndex">
+          <button [style.background-color]="sweptBoard[rowIndex][colIndex] === 'swept' ? 'gray' : 'lightgray'"
+            [class.animate-shake]="sweptBoard[rowIndex][colIndex] === 'swept'" (click)="sweep(rowIndex, colIndex)">
+            {{ displayItem(rowIndex, colIndex) }}
+          </button>
+        </div>
       </div>
     </div>
-
   </div>
 </div>
