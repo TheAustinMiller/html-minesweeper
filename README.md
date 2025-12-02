@@ -1,5 +1,7 @@
 # Minesweeper
 
+<img width="657" height="725" alt="image" src="https://github.com/user-attachments/assets/c1417d73-0209-4ea3-a6f6-fd1622c11b94" />
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.0.0.
 
 ## Development server
