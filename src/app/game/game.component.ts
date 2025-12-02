@@ -8,13 +8,14 @@ import { min } from 'rxjs';
   encapsulation: ViewEncapsulation.None
 })
 export class GameComponent {
-  readonly rows: number = 10;
-  readonly cols: number = 10;
+  rows: number = 8;
+  cols: number = 10;
   readonly colors: string[] = ["", "blue", "green", "red", "darkblue", "brown", "cyan", "black", "gray"];
   gameOver: boolean = false;
   mines: number = 10;
   clicks = 0;
   flags = 10;
+  difficulty: string = 'easy';
   gameBoard: string[][] = Array.from({ length: this.rows }, () =>
     Array.from({ length: this.cols }, () => ' ')
   );
@@ -85,6 +86,23 @@ export class GameComponent {
     }
   }
 
+  setDifficulty(level: string): void {
+    switch (level) {
+      case 'easy':
+        this.difficulty = 'medium';
+        break;
+      case 'medium':
+        this.difficulty = 'hard';
+        break;
+      case 'hard':
+        this.difficulty = 'easy';
+        break;
+      default:
+        this.difficulty = 'easy';
+    }
+    this.reset();
+  }
+
   checkWin(): boolean {
     if (this.sweptBoard.flat().filter(cell => cell === 'unswept').length === this.mines) {
       return true;
@@ -105,8 +123,9 @@ export class GameComponent {
 
   placeMines(initialRow: number, initialCol: number): void {
     const forbidden = this.getNeighbors(initialRow, initialCol);
+    let iterateMines = this.mines;
 
-    while (this.mines > 0) {
+    while (iterateMines > 0) {
       const r = Math.floor(Math.random() * this.rows);
       const c = Math.floor(Math.random() * this.cols);
 
@@ -114,10 +133,9 @@ export class GameComponent {
 
       if (!forbidden.has(key) && this.mineBoard[r][c] !== "💣") {
         this.mineBoard[r][c] = "💣";
-        this.mines--;
+        iterateMines--;
       }
     }
-    this.mines = 10;
   }
 
   private getNeighbors(row: number, col: number) {
@@ -166,8 +184,23 @@ export class GameComponent {
   }
 
   reset(): void {
+    if (this.difficulty === 'easy') {
+      this.rows = 8;
+      this.cols = 10;
+      this.mines = 10;
+      this.flags = 10;
+    } else if (this.difficulty === 'medium') {
+      this.rows = 14;
+      this.cols = 18;
+      this.mines = 40;
+      this.flags = 40;
+    } else if (this.difficulty === 'hard') {
+      this.rows = 20;
+      this.cols = 24;
+      this.mines = 99;
+      this.flags = 99;
+    }
     this.gameOver = false;
-    this.mines = 10;
     this.clicks = 0;
     this.gameBoard = Array.from({ length: this.rows }, () =>
       Array.from({ length: this.cols }, () => ' ')
@@ -182,9 +215,8 @@ export class GameComponent {
       Array(this.cols).fill('')
     );
     this.adjacencyBoard = Array.from({ length: this.rows }, () =>
-    Array(this.cols).fill(0)
-  );
-
+      Array(this.cols).fill(0)
+    );
     this.createBoard();
   }
 }
