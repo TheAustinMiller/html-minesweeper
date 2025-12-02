@@ -14,6 +14,7 @@ export class GameComponent {
   gameOver: boolean = false;
   mines: number = 10;
   clicks = 0;
+  flags = 10;
   gameBoard: string[][] = Array.from({ length: this.rows }, () =>
     Array.from({ length: this.cols }, () => ' ')
   );
@@ -142,11 +143,13 @@ export class GameComponent {
     if (!this.gameOver && this.sweptBoard[row][col] === 'swept') return;
 
     if (!this.gameOver && this.flagBoard[row][col] === '🚩') {
-      this.gameBoard[row][col] = ' ';
+      this.gameBoard[row][col] = '';
       this.flagBoard[row][col] = '';
+      this.flags++;
     } else {
       this.flagBoard[row][col] = '🚩';
       this.gameBoard[row][col] = '🚩';
+      this.flags--;
     }
   }
 
