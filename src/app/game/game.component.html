@@ -4,12 +4,19 @@
       <div class="row" *ngFor="let row of gameBoard; let rowIndex = index">
         <div class="cell" *ngFor="let cell of row; let colIndex = index" [attr.data-row]="rowIndex"
           [attr.data-col]="colIndex">
-          <button [style.background-color]="sweptBoard[rowIndex][colIndex] === 'swept' ? 'gray' : 'lightgray'"
-            [class.animate-shake]="sweptBoard[rowIndex][colIndex] === 'swept'" (click)="sweep(rowIndex, colIndex)">
-            {{ displayItem(rowIndex, colIndex) }}
+          <button [style.background-color]="sweptBoard[rowIndex][colIndex] === 'swept' ? '#B0B0B0' : 'lightgray'" [style.color]="colors[adjacencyBoard[rowIndex][colIndex]]" (click)="sweep(rowIndex, colIndex)"
+            (contextmenu)="flag($event, rowIndex, colIndex)">
+            <b>{{ displayItem(rowIndex, colIndex) }}</b>
           </button>
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="border">
+  <div class="light-border">
+    <div class="reset-button-container">
+      <button class="reset-button" (click)="reset()">Reset Game</button>
   </div>
 </div>

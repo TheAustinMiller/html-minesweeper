@@ -7,6 +7,7 @@ header {
 .border {
   background: rgb(172, 172, 172);
   height: fit-content;
+  width: fit-content;
   padding: 4px;
   margin: 25px auto;
   border: black 3px solid;

@@ -10,6 +10,7 @@ import { min } from 'rxjs';
 export class GameComponent {
   readonly rows: number = 10;
   readonly cols: number = 10;
+  readonly colors: string[] = ["", "blue", "green", "red", "darkblue", "brown", "cyan", "black", "gray"];
   gameOver: boolean = false;
   mines: number = 10;
   clicks = 0;
@@ -22,6 +23,13 @@ export class GameComponent {
   sweptBoard: string[][] = Array.from({ length: this.rows }, () =>
     Array.from({ length: this.cols }, () => "unswept")
   );
+  flagBoard = Array.from({ length: this.rows }, () =>
+    Array(this.cols).fill('')
+  );
+  adjacencyBoard: number[][] = Array.from({ length: this.rows }, () =>
+    Array(this.cols).fill(0)
+  );
+
   Math = Math;
 
   constructor() {
@@ -33,6 +41,7 @@ export class GameComponent {
   }
 
   sweep(row: number, col: number): void {
+    if (this.flagBoard[row][col] === '🚩') return;
     if (!this.gameOver && this.sweptBoard[row][col] === "unswept") {
       this.clicks++;
       if (this.clicks == 1) {
@@ -54,42 +63,90 @@ export class GameComponent {
         // If not, reveal the number of adjacent mines
         let adjacentMines = this.calculateAdjacentMines(row, col);
         if (adjacentMines > 0) { this.gameBoard[row][col] = adjacentMines.toString(); }
+        if (adjacentMines === 0) {
+          for (let dr = -1; dr <= 1; dr++) {
+            for (let dc = -1; dc <= 1; dc++) {
+              const r = row + dr;
+              const c = col + dc;
+              if (r >= 0 && r < this.rows && c >= 0 && c < this.cols && this.sweptBoard[r][c] === 'unswept') {
+                this.sweep(r, c);
+              }
+            }
+          }
+        }
+
       }
     }
-
-
-    // If there are no adjacent mines, recursively sweep adjacent cells (TODO)
     // Check for win
+    if (!this.gameOver && this.checkWin()) {
+      this.gameOver = true;
+      alert('Congratulations! You won!');
+    }
+  }
+
+  checkWin(): boolean {
+    if (this.sweptBoard.flat().filter(cell => cell === 'unswept').length === this.mines) {
+      return true;
+    }
+    return false;
   }
 
   calculateAdjacentMines(row: number, col: number): number {
-    let mineCount = 0;
-    let xLeft = col - 1;
-    let xRight = col + 1;
-    let yTop = row - 1;
-    let yBottom = row + 1;
-
-    if (xLeft != -1 && yTop != -1 && this.mineBoard[yTop][xLeft] === '💣') mineCount++;
-    if (yTop != -1 && this.mineBoard[yTop][col] === '💣') mineCount++;
-    if (xRight != this.cols && yTop != -1 && this.mineBoard[yTop][xRight] === '💣') mineCount++;
-    if (xLeft != -1 && this.mineBoard[row][xLeft] === '💣') mineCount++;
-    if (xRight != this.cols && this.mineBoard[row][xRight] === '💣') mineCount++;
-    if (yBottom != this.rows && xLeft != -1 && this.mineBoard[yBottom][xLeft] === '💣') mineCount++;
-    if (yBottom != this.rows && this.mineBoard[yBottom][col] === '💣') mineCount++;
-    if (yBottom != this.rows && xRight != this.cols && this.mineBoard[yBottom][xRight] === '💣') mineCount++;
-
-    return mineCount;
+    let count = 0;
+    for (const key of this.getNeighbors(row, col)) {
+      const [r, c] = key.split(',').map(Number);
+      if (this.mineBoard[r][c] === '💣') count++;
+    }
+    this.adjacencyBoard[row][col] = count;
+    return count;
   }
 
+
   placeMines(initialRow: number, initialCol: number): void {
+    const forbidden = this.getNeighbors(initialRow, initialCol);
+
     while (this.mines > 0) {
       const r = Math.floor(Math.random() * this.rows);
       const c = Math.floor(Math.random() * this.cols);
 
-      if (!(this.mineBoard[r][c] === '💣') && !(r === initialRow && c === initialCol)) {
-        this.mineBoard[r][c] = '💣';
+      const key = `${r},${c}`;
+
+      if (!forbidden.has(key) && this.mineBoard[r][c] !== "💣") {
+        this.mineBoard[r][c] = "💣";
         this.mines--;
       }
+    }
+    this.mines = 10;
+  }
+
+  private getNeighbors(row: number, col: number) {
+    const cells = [];
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        const r = row + dr;
+        const c = col + dc;
+        if (
+          r >= 0 && r < this.rows &&
+          c >= 0 && c < this.cols
+        ) {
+          cells.push(`${r},${c}`);
+        }
+      }
+    }
+    return new Set(cells);
+  }
+
+  flag(event: MouseEvent, row: number, col: number): void {
+    event.preventDefault();
+
+    if (!this.gameOver && this.sweptBoard[row][col] === 'swept') return;
+
+    if (!this.gameOver && this.flagBoard[row][col] === '🚩') {
+      this.gameBoard[row][col] = ' ';
+      this.flagBoard[row][col] = '';
+    } else {
+      this.flagBoard[row][col] = '🚩';
+      this.gameBoard[row][col] = '🚩';
     }
   }
 
@@ -118,6 +175,13 @@ export class GameComponent {
     this.sweptBoard = Array.from({ length: this.rows }, () =>
       Array.from({ length: this.cols }, () => "unswept")
     );
+    this.flagBoard = Array.from({ length: this.rows }, () =>
+      Array(this.cols).fill('')
+    );
+    this.adjacencyBoard = Array.from({ length: this.rows }, () =>
+    Array(this.cols).fill(0)
+  );
+
     this.createBoard();
   }
 }
