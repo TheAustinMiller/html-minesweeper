@@ -20,6 +20,11 @@ button {
     margin: 25px auto 0 auto;
 }
 
+.light-border {
+  background: lightgray;
+  padding: 6px;
+  border: rgb(53, 53, 53) 2px solid;
+}
 
 .game-board {
   display: grid;
@@ -49,4 +54,10 @@ h1 {
     display: flex;
     gap: 50px;
     justify-content: center;
+}
+
+header {
+  text-align: center;
+  font-size: 2rem;
+  font-family: 'Press Start 2P', monospace;
 }

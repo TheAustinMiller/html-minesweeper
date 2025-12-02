@@ -16,6 +16,8 @@ export class GameComponent {
   clicks = 0;
   flags = 10;
   difficulty: string = 'easy';
+  timer: number = 0;
+  timerInterval: any = null;
   gameBoard: string[][] = Array.from({ length: this.rows }, () =>
     Array.from({ length: this.cols }, () => ' ')
   );
@@ -48,6 +50,7 @@ export class GameComponent {
       this.clicks++;
       if (this.clicks == 1) {
         this.placeMines(row, col);
+        this.startTimer();
       }
       this.sweptBoard[row][col] = "swept";
       // Check if there is a mine
@@ -61,6 +64,7 @@ export class GameComponent {
         }
         this.gameBoard[row][col] = '💥';
         this.gameOver = true;
+        clearInterval(this.timerInterval);
       } else {
         // If not, reveal the number of adjacent mines
         let adjacentMines = this.calculateAdjacentMines(row, col);
@@ -82,9 +86,19 @@ export class GameComponent {
     // Check for win
     if (!this.gameOver && this.checkWin()) {
       this.gameOver = true;
-      alert('Congratulations! You won!');
+      alert(`Congratulations! You won in ${this.timer} seconds!`);
+      clearInterval(this.timerInterval);
     }
   }
+
+  startTimer(): void {
+    if (this.timerInterval) return; // prevent multiple intervals
+
+    this.timerInterval = setInterval(() => {
+      this.timer++;
+    }, 1000);
+  }
+
 
   setDifficulty(level: string): void {
     switch (level) {
@@ -202,6 +216,9 @@ export class GameComponent {
     }
     this.gameOver = false;
     this.clicks = 0;
+    clearInterval(this.timerInterval);
+    this.timerInterval = null;
+    this.timer = 0;
     this.gameBoard = Array.from({ length: this.rows }, () =>
       Array.from({ length: this.cols }, () => ' ')
     );

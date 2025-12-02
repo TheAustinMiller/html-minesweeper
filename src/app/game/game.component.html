@@ -1,15 +1,24 @@
+<div class="top-of-page-stuff">
+  <div class="border">
+    <div class="light-border">
+      <header class="header"><b>MINESWEEPER</b></header>
+    </div>
+  </div>
+  <div class="timer">
+    Time: {{ timer }}s
+  </div>
+</div>
+
 <div class="border">
-  <div class="light-border">
-    <div class="game-board" [style.--rows]="rows" [style.--cols]="cols">
-      <div class="row" *ngFor="let row of gameBoard; let rowIndex = index">
-        <div class="cell" *ngFor="let cell of row; let colIndex = index" [attr.data-row]="rowIndex"
-          [attr.data-col]="colIndex">
-          <button [style.background-color]="sweptBoard[rowIndex][colIndex] === 'swept' ? '#B0B0B0' : 'lightgray'"
-            [style.color]="colors[adjacencyBoard[rowIndex][colIndex]]" (click)="sweep(rowIndex, colIndex)"
-            (contextmenu)="flag($event, rowIndex, colIndex)">
-            <b>{{ displayItem(rowIndex, colIndex) }}</b>
-          </button>
-        </div>
+  <div class="game-board" [style.--rows]="rows" [style.--cols]="cols">
+    <div class="row" *ngFor="let row of gameBoard; let rowIndex = index">
+      <div class="cell" *ngFor="let cell of row; let colIndex = index" [attr.data-row]="rowIndex"
+        [attr.data-col]="colIndex">
+        <button [style.background-color]="sweptBoard[rowIndex][colIndex] === 'swept' ? '#B0B0B0' : 'lightgray'"
+          [style.color]="colors[adjacencyBoard[rowIndex][colIndex]]" (click)="sweep(rowIndex, colIndex)"
+          (contextmenu)="flag($event, rowIndex, colIndex)">
+          <b>{{ displayItem(rowIndex, colIndex) }}</b>
+        </button>
       </div>
     </div>
   </div>
